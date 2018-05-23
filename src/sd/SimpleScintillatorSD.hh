@@ -23,6 +23,7 @@
 #include "G4Run.hh"
 #include "globals.hh"
 #include "g4root.hh"
+#include "Randomize.hh"
 #include "analysis/VProcessor.hh"
 #include "analysis/VDetector.hh"
 #include "ScintillatorHit.hh"
@@ -60,6 +61,8 @@ protected:
 
   ScintillatorHitsCollection* fHitsCollection;
   G4int fHCID;
+
+  double fEfficiency;
 
 };
 

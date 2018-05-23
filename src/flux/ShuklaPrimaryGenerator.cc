@@ -153,13 +153,12 @@ ShuklaPrimaryGenerator::ShuklaPrimaryGenerator()
     G4int nofParticles = 1;
     fParticleGun  = new G4ParticleGun(nofParticles);
 
-
     // Now setup the particle integrals and source/target boxes
-    fEnergyPDF->SetRange(fMinEnergy, fMaxEnergy);
+    fEnergyPDF->SetRange(fMinEnergy * GeV, fMaxEnergy  * GeV);
     fSourceBox = false;
     GetSourceBox();
     GetTargetBoxes();
-    fEnergyPDF->SetRange(fMinEnergy, fMaxEnergy); // E in MeV
+    fEnergyPDF->SetRange(fMinEnergy  * GeV, fMaxEnergy * GeV); // E in MeV
 
     std::cout << "FLX: --> Complete." << std::endl;
 
@@ -405,7 +404,7 @@ void ShuklaPrimaryGenerator::GeneratePrimaries(G4Event* anEvent) {
     // fMuonTime = fNThrows / fFluxIntegrated / fArea;
     fMuonDir = direction;
     fMuonPos = position;
-    fMuonEnergy = E*1000.0;
+    fMuonEnergy = E;
 
     fParticleGun->SetParticleEnergy(fMuonEnergy);
     fParticleGun->SetParticleTime(fMuonTime);

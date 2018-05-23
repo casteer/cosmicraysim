@@ -20,6 +20,13 @@ SimpleScintillatorSD::SimpleScintillatorSD(DBTable tbl):
     if (!tbl.Has("processor") or tbl.GetI("processor") > 0) {
         Analysis::Get()->RegisterProcessor(new SimpleScintillatorProcessor(this));
     }
+    int fEdepIndex;
+
+    fEfficiency = 1.0;
+    if (tbl.Has("efficiency")) {
+        fEfficiency = tbl.GetD("efficiency");
+        Analysis::Get()->RegisterProcessor(new SimpleScintillatorProcessor(this));
+    }
 
     collectionName.push_back(GetID());
 }
@@ -55,7 +62,16 @@ G4bool SimpleScintillatorSD::ProcessHits(G4Step* step, G4TouchableHistory* touch
     if (edep <= 0.) {
         return false;
     }
+
+    // Check for the fEfficiency at each hit
+    if(fEfficiency!=1.0){
+      G4double r = G4UniformRand();
+      if(r>fEfficiency) return false;
+    }
+
     G4Track* track = step->GetTrack();
+
+
 
     // Get the step inside the detector
     G4StepPoint* preStepPoint = step->GetPreStepPoint();

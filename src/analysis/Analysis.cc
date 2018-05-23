@@ -204,6 +204,3 @@ void Analysis::SetFluxProcessor(VFluxProcessor* p) {
 }
 
 } // - namespace COSMIC
-
-
-
