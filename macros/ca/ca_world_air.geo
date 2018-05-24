@@ -7,6 +7,6 @@
   material: "G4_AIR",
   size: ["world_box_length", "world_box_width", "2*det_tunnel_depth"],
   type: "box"
-  color: [0.8,0.8,0.5,0.999],
-  drawstyle: "solid"
+  // color: [0.8,0.8,0.5,0.999],
+  // drawstyle: "solid"
 }

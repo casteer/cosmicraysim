@@ -71,9 +71,8 @@ public:
    // virtual std::vector<G4AttValue>* CreateAttValues() const;
     void Print();
 
-
-
-    G4int GetID() const { return fId; }
+    G4int GetID() { return fId; }
+    // G4int SetID(int inID) { fId = inID; }
     G4int GetType() const { return fType; }
     void SetType(G4int val){fType=val; }
 

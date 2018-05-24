@@ -131,6 +131,7 @@ protected:
   int fThXZIndex;
   int fThYZIndex;
   int fEdepIndex;
+  int fTrg;
 
 };
 

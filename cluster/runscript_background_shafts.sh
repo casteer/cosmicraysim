@@ -18,7 +18,7 @@ cd $scratchdir
 
 # Run Job
 echo "Running background simulation..."
-cosmicraysim -t ${RUNLENGTH} -c ${CHUNKLENGTH} -g ${GEOMETRY}/ca_variables_vent_shafts.geo -g ${GEOMETRY}/ca_world_rock.geo -g ${GEOMETRY}/ca_detector_system_vent_shafts.geo -g ${GEOMETRY}/ca_source_flux_alt.geo -o ca_vent_shafts_background
+cosmicraysim -t ${RUNLENGTH} -c ${CHUNKLENGTH} -g ${GEOMETRY}/ca_variables_vent_shafts.geo -g ${GEOMETRY}/ca_world_rock.geo -g ${GEOMETRY}/ca_detector_system_vent_shafts.geo -g ${GEOMETRY}/ca_source_flux_vent_shafts.geo -o ca_vent_shafts_background
 
 # Copy Outputs back to WORK Area
 cp -rv ./* $WORKDIR/
