@@ -72,7 +72,7 @@ public:
     void Print();
 
     G4int GetID() { return fId; }
-    // G4int SetID(int inID) { fId = inID; }
+    G4int SetID(int inID) { fId = inID; }
     G4int GetType() const { return fType; }
     void SetType(G4int val){fType=val; }
 

@@ -6,6 +6,7 @@
 #include "TrueMuonTracker.hh"
 #include "SimpleScintillatorSD.hh"
 #include "LongDriftSD.hh"
+#include "LineOfSightSD.hh"
 #include "NeutronSD.hh"
 
 
@@ -21,6 +22,7 @@ VDetector* DetectorObjectFactory::CreateSD(DBTable tbl) {
   else if (type.compare("scintillator") == 0) return new SimpleScintillatorSD(tbl);
   else if (type.compare("neutron") == 0) return new NeutronSD(tbl);
   else if (type.compare("longdrift") == 0) return new LongDriftSD(tbl);
+  else if (type.compare("los") == 0) return new LineOfSightSD(tbl);
 
   // Check we didn't get to here
   std::cout << "Failed to Create SD : " << type << " NOW" << std::endl;

@@ -35,15 +35,16 @@ G4Element* MaterialFactory::GetElement(std::string name) {
   if (mat) return mat;
 
   // If not available we have to build the element
-  DBTable mattbl = DB::Get()->GetTable("ELEMENT", name);
-  double atomicmass  = mattbl.GetG4D("atomic_mass");
-  int atomicnumber   = mattbl.GetD("atomic_number");
-  std::string symbol = mattbl.GetS("symbol");
+    DBTable mattbl = DB::Get()->GetTable("ELEMENT", name);
+    double atomicmass  = mattbl.GetG4D("atomic_mass");
+    int atomicnumber   = mattbl.GetD("atomic_number");
+    std::string symbol = mattbl.GetS("symbol");
+    // Create material
+    mat = new G4Element(name, symbol, atomicnumber, atomicmass );
 
-  // Create material
-  mat = new G4Element(name, symbol, atomicnumber, atomicmass );
   return mat;
 }
+
 
 G4Material* MaterialFactory::GetMaterial(std::string name) {
 

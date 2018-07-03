@@ -76,8 +76,9 @@ void CosmicRunAction::EndOfRunAction(const G4Run* run)
   fCurrentRun++;
   Analysis::Get()->IncrementSubRun();
   std::cout << "ACT: Finished Run."
-            << " Events : " << Analysis::Get()->GetNEvents() 
+            << " Events : " << Analysis::Get()->GetNEvents()
             << ", Triggered : " << Analysis::Get()->GetNSavedEvents()
             << ", Exposure : " << Analysis::Get()->GetExposureTime() << " s" << std::endl;
-}
 
+
+}

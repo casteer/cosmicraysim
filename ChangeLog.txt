@@ -1,0 +1,13 @@
+27-7-18
+
+* Added LOS line of sight primary generator
+
+* Added LOS sensitive detector to measure the areal mass of trajectories
+
+* Modified MaterialManager for material mixtures by volume
+
+* Fixed factor of 0.5 for size of CRY generator source
+
+* Changed NeutronSD to output every hit in the sensitive detector volume (be careful) and output track and parentIDs to check multiplicity
+
+* Added PrimaryGeneratorROOT that permits the user to provide their own ROOT tree with an energy for the particle source.

@@ -109,10 +109,12 @@ public:
   int GetNEvents(){ return fGeneratedEvents; };
 
   int GetNSavedEvents(){ return fSavedEvents; };
-  
+
   void SetChunkSize(int i){ fChunkSize = i; };
   int GetChunkSize(){ return fChunkSize; };
-  
+
+  void SetIntegratedRate(double r){ fIntegratedRate = r;};
+
 protected:
 
   static Analysis *fPrimary; ///< Singleton Object
@@ -135,6 +137,8 @@ protected:
 
   bool fNTuplesSetup; ///< Check Ntuples OKAY
 
+  double fIntegratedRate;
+
   std::string fOutputTag;
   int fRunID;
   int fSubRunID;
@@ -145,4 +149,3 @@ protected:
 
 } // - namespace COSMIC
 #endif
-

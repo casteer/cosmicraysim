@@ -119,6 +119,7 @@ protected:
   G4double fPDG;
   G4double fThetaXZ;
   G4double fThetaYZ;
+  G4int fId;
 
   int fTimeIndex;
   int fPDGIndex;
@@ -131,7 +132,7 @@ protected:
   int fThXZIndex;
   int fThYZIndex;
   int fEdepIndex;
-  int fTrg;
+  int fIdIndex;
 
 };
 

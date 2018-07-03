@@ -71,14 +71,14 @@ G4bool SimpleScintillatorSD::ProcessHits(G4Step* step, G4TouchableHistory* touch
 
     G4Track* track = step->GetTrack();
 
-
-
     // Get the step inside the detector
     G4StepPoint* preStepPoint = step->GetPreStepPoint();
     G4TouchableHistory* touchable = (G4TouchableHistory*)(preStepPoint->GetTouchable());
 
     // Get the position of the volume associated with the step
     G4ThreeVector volume_position = touchable->GetVolume()->GetTranslation()/m;
+    G4int this_id = touchable->GetVolume()->GetCopyNo();
+
     // std::cout << "Vol: " << volume_position << std::endl;
 
     // Get the hitTime
@@ -88,6 +88,7 @@ G4bool SimpleScintillatorSD::ProcessHits(G4Step* step, G4TouchableHistory* touch
     hit->SetParticleType((int) track->GetParticleDefinition()->GetPDGEncoding());
     hit->SetEdep(edep);
     hit->SetTime(hitTime);
+    hit->SetID(1);
     hit->SetPos(preStepPoint->GetPosition());
     hit->SetVolPos(volume_position);
     hit->SetAngles(track->GetMomentumDirection());
@@ -122,6 +123,7 @@ bool SimpleScintillatorProcessor::BeginOfRunAction(const G4Run* /*run*/) {
         fPDGIndex = man ->CreateNtupleDColumn(tableindex + "_pdg");
         fThXZIndex = man ->CreateNtupleDColumn(tableindex + "_thXZ");
         fThYZIndex = man ->CreateNtupleDColumn(tableindex + "_thYZ");
+        fIdIndex = man ->CreateNtupleIColumn(tableindex + "_id");
     }
 
     Reset();
@@ -172,7 +174,7 @@ bool SimpleScintillatorProcessor::ProcessEvent(const G4Event* event) {
     fThetaYZ /= nhits + 0.;
 
     fPDG = (double) ( *(hc) )[0]->GetType();
-
+    fId = (int) ( *(hc) )[0]->GetID();
 
     // Register Trigger State
     fHasInfo = fEdep > 0.0;
@@ -198,6 +200,7 @@ bool SimpleScintillatorProcessor::ProcessEvent(const G4Event* event) {
 
         man->FillNtupleDColumn(fThXZIndex, fThetaXZ);
         man->FillNtupleDColumn(fThYZIndex, fThetaYZ);
+        man->FillNtupleIColumn(fIdIndex, fId);
 
         return true;
     } else {
@@ -215,6 +218,7 @@ bool SimpleScintillatorProcessor::ProcessEvent(const G4Event* event) {
         man->FillNtupleDColumn(fVolPosZIndex, -999.);
         man->FillNtupleDColumn(fThXZIndex, -999.);
         man->FillNtupleDColumn(fThYZIndex, -999.);
+        man->FillNtupleIColumn(fIdIndex, -999);
 
         return false;
     }
