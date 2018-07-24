@@ -1,2 +1,0 @@
-RUN: --> Trigger Rate: 0 +/- 0 s^-1
-ACT: --> Final Trigger Rate: 4.90925 +/- 0.381032 s^-1
