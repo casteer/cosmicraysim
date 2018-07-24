@@ -81,4 +81,15 @@ void CosmicRunAction::EndOfRunAction(const G4Run* run)
             << ", Exposure : " << Analysis::Get()->GetExposureTime() << " s" << std::endl;
 
 
+  double rate = ((double) Analysis::Get()->GetNSavedEvents()) / Analysis::Get()->GetExposureTime();
+  double err_rate = sqrt((double) Analysis::Get()->GetNSavedEvents()) / Analysis::Get()->GetExposureTime();
+  std::cout << "ACT: --> Final Trigger Rate: " << rate << " +/- " << err_rate << " s^-1" << std::endl;
+
+  std::vector<int> counts = Analysis::Get()->GetCounts();
+  for(int i=0;i< (int) counts.size();i++){
+    rate = ((double) counts.at(i)) / Analysis::Get()->GetExposureTime();
+    err_rate = sqrt((double) counts.at(i)) / Analysis::Get()->GetExposureTime();
+    std::cout << "ACT: --> Final Trigger Counts: " << i << " \t " << rate << " +/- " << err_rate << " s^-1" << std::endl;
+  }
+
 }

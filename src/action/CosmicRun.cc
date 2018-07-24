@@ -61,9 +61,19 @@ void CosmicRun::RecordEvent(const G4Event* event)
   // Logging
   int eventid = event->GetEventID();
   if (eventid % fPrintSize == 0) {
+
       std::cout << "RUN: --> Processing Event : " << eventid
               << "/" << numberOfEventToBeProcessed << std::endl;
-      
+
+      // Print update of triggers too
+      std::cout << "RUN: --> Triggers: " << Analysis::Get()->GetNSavedEvents()
+        << ", Exposure : " << Analysis::Get()->GetExposureTime() << " s" << std::endl;
+
+      double rate = ((double) Analysis::Get()->GetNSavedEvents()) / Analysis::Get()->GetExposureTime();
+      double err_rate = sqrt((double) Analysis::Get()->GetNSavedEvents()) / Analysis::Get()->GetExposureTime();
+      std::cout << "RUN: --> Trigger Rate: " << rate << " +/- " << err_rate << " s^-1" << std::endl;
+
+
   }
 
   Analysis::Get()->ProcessEvent(event);

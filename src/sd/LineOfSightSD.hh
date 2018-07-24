@@ -63,6 +63,9 @@ public:
   G4double GetRange(){return fRange;};
   G4double GetDEDX(){return fdedx;};
 
+  G4ThreeVector GetPreStepPosition(){return fPreStepPosition;};
+  G4ThreeVector GetPostStepPosition(){return fPostStepPosition;};
+
 protected:
 
   G4double fLOSMass;
@@ -76,6 +79,12 @@ protected:
   double fRange;// The range of the particle in this detector region
 
   G4EmCalculator* fCalc;
+
+
+
+  G4ThreeVector fPreStepPosition;
+  G4ThreeVector fPostStepPosition;
+
 
 };
 

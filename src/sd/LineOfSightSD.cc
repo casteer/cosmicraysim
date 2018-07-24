@@ -61,8 +61,8 @@ LineOfSightSD::LineOfSightSD(std::string name, std::string id, bool autoprocess,
   }
 
   fCheckedCutOff = false;
-
   fCalc = new G4EmCalculator();
+
 
 }
 
@@ -101,6 +101,9 @@ G4bool LineOfSightSD::ProcessHits(G4Step* step, G4TouchableHistory* /*touch*/) {
   G4double density = fMaterial->GetDensity()/(g/cm3);
   fEnergy = (step->GetPreStepPoint())->GetKineticEnergy();
 
+  fPreStepPosition = (step->GetPreStepPoint())->GetPosition();
+  fPostStepPosition = (step->GetPreStepPoint())->GetPosition();
+
   // Check the depth
   G4ThreeVector pos = (step->GetPreStepPoint())->GetPosition();
   G4double step_length = step->GetStepLength()/cm;
@@ -123,6 +126,8 @@ G4bool LineOfSightSD::ProcessHits(G4Step* step, G4TouchableHistory* /*touch*/) {
   //                 * LOS_gen->GetVerticalRate();
   // }// End if
 
+
+
 }// End function
 
 
@@ -138,6 +143,7 @@ LineOfSightProcessor::LineOfSightProcessor(LineOfSightSD* trkr, bool autosave) :
   fTracker = trkr;
 }
 
+
 bool LineOfSightProcessor::BeginOfRunAction(const G4Run* /*run*/) {
 
   std::string tableindex = GetID();
@@ -151,7 +157,9 @@ bool LineOfSightProcessor::BeginOfRunAction(const G4Run* /*run*/) {
   fRangeIndex= man ->CreateNtupleDColumn(tableindex + "_range");
 
   return true;
+
 }
+
 
 bool LineOfSightProcessor::ProcessEvent(const G4Event* /*event*/) {
 
@@ -176,33 +184,37 @@ bool LineOfSightProcessor::ProcessEvent(const G4Event* /*event*/) {
     man->FillNtupleDColumn(fLineOfSightMassIndex, -999);
     man->FillNtupleDColumn(fDEDxIndex ,-999);
     man->FillNtupleDColumn(fRangeIndex ,-999);
+
   }
 
-
-
-    // LineOfSightProcessor::DrawEvent();
+    LineOfSightProcessor::DrawEvent();
 
     return true;
 
 }
 
 void LineOfSightProcessor::DrawEvent(){
+
   // Draw Track if in interactive
   G4VVisManager* pVVisManager = G4VVisManager::GetConcreteInstance();
   if (pVVisManager)
   {
 
-      // G4ThreeVector LineOfSightpos = fTracker->GetAveragePosition();
-      //
-      //   G4Circle LineOfSightMarker(LineOfSightpos);
-      //
-      //   G4Colour colour(1., 0., 0.);
-      //   G4VisAttributes attribs(colour);
-      //   LineOfSightMarker.SetVisAttributes(attribs);
-      //
-      //   pVVisManager->Draw(LineOfSightMarker);
+    // Has this event been triggered?
+    // std::cout << Analysis::Get()->IsTriggered() << std::endl;
+
+    if(Analysis::Get()->IsTriggered()){
+      G4Polyline polyline;
+      polyline.push_back( fTracker->GetPreStepPosition() );
+      polyline.push_back( fTracker->GetPostStepPosition() );
+      G4Colour colour(0., 0., 1.);
+      G4VisAttributes attribs(colour);
+      polyline.SetVisAttributes(attribs);
+      pVVisManager->Draw(polyline);
+    }
 
   }
+
 }
 
 } // - namespace COSMIC

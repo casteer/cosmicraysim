@@ -64,6 +64,10 @@ void Analysis::BeginOfRunAction(const G4Run* run) {
   outputname += std::to_string(fRunID) + ".";
   outputname += std::to_string(fSubRunID) + ".root";
 
+  //
+  std::vector<VTrigger*>::iterator titer;
+  for (titer = fTriggers.begin(); titer != fTriggers.end(); titer++) fSavedCounts.push_back(0);
+
   // Open new output
   fG4Manager->OpenFile(outputname);
   fNTuplesSetup = true;
@@ -93,8 +97,11 @@ void Analysis::ProcessEvent(const G4Event* event) {
 
   // Run Trigger Processors
   std::vector<VTrigger*>::iterator titer;
+  int i=0;
   for (titer = fTriggers.begin(); titer != fTriggers.end(); titer++) {
     (*titer)->ProcessTrigger(event);
+      if ((*titer)->GetTrigger()) fSavedCounts[i]++;
+    i++;
   }
 
   // Add one to total generated
@@ -153,6 +160,8 @@ VTrigger* Analysis::GetTrigger(std::string id) {
   throw;
   return 0;
 }
+
+std::vector<int> Analysis::GetCounts(){ return fSavedCounts;};  
 
 void Analysis::RegisterProcessor(VProcessor* p) {
   fProcessors.push_back(p);

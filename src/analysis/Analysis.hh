@@ -109,6 +109,7 @@ public:
   int GetNEvents(){ return fGeneratedEvents; };
 
   int GetNSavedEvents(){ return fSavedEvents; };
+  std::vector<int> GetCounts();
 
   void SetChunkSize(int i){ fChunkSize = i; };
   int GetChunkSize(){ return fChunkSize; };
@@ -129,6 +130,7 @@ protected:
 
   int fSavedEvents;      ///< Number of saved events so far
   int fSavedEventsLimit; ///< Max limit on saved events
+  std::vector<int> fSavedCounts;
 
   int fGeneratedEvents;       ///< Number of gen. events so far
   int fGeneratedEventsLimit;  ///< Max limit on gen. events
