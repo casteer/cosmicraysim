@@ -20,7 +20,6 @@
 #include "db/ROOTHeaders.hh"
 #include "G4Polyline.hh"
 
-
 namespace COSMIC {
 
 //------------------------------------------------------------------
@@ -63,6 +62,7 @@ void NeutronSD::ResetState() {
   fNeutronEventID.clear();
   fNeutronTrackID.clear();
   fNeutronParentID.clear();
+  fNeutronPDG.clear();
   fNeutronPos.clear();
   fNeutronMom.clear();
   fNeutronKE.clear();
@@ -86,11 +86,11 @@ G4bool NeutronSD::ProcessHits(G4Step* step, G4TouchableHistory* /*touch*/) {
 
 
   // FOR DEBUG :
-  bool is_Neutron = (steppdg == 2112);
-  bool is_Alpha = (steppdg == 1000020040);
+  // bool is_Neutron = (steppdg == 2112);
+  // bool is_Alpha = (steppdg == 1000020040);
 
   // if ( !(is_Neutron||is_Alpha) ) return false;
-  if ( !is_Neutron ) return false;
+  // if ( !is_Neutron ) return false;
 
   // We only want secondary particles in the detector
   // if(step->GetTrack()->GetParentID() == 0) return false;
@@ -101,6 +101,7 @@ G4bool NeutronSD::ProcessHits(G4Step* step, G4TouchableHistory* /*touch*/) {
   G4StepPoint* steppoint = step->GetPostStepPoint();
   G4double steptime = steppoint->GetGlobalTime();
 
+  fNeutronPDG.push_back(steppdg);
   fNeutronEventID.push_back(G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID());
   fNeutronTrackID.push_back(track->GetTrackID());
   fNeutronParentID.push_back(track->GetParentID());
@@ -110,6 +111,7 @@ G4bool NeutronSD::ProcessHits(G4Step* step, G4TouchableHistory* /*touch*/) {
   fNeutronEnergyDeposited.push_back(edep);
   fNeutronTime.push_back(steppoint->GetGlobalTime());
   fHits++;
+  // Add to the triggers?
 
   // // Get the unique id of this particle
   // std::pair<G4int, G4int> this_particle_ids = std::make_pair( track->GetTrackID(), track->GetParentID() );
@@ -193,6 +195,7 @@ bool NeutronProcessor::BeginOfRunAction(const G4Run* /*run*/) {
 
   fNeutronKEIndex = man ->CreateNtupleDColumn(tableindex + "_ke");
 
+  fNeutronPDGIndex = man ->CreateNtupleIColumn(tableindex + "_pdg");
   fNeutronEventIDIndex = man ->CreateNtupleIColumn(tableindex + "_eventid");
   fNeutronParentIDIndex = man ->CreateNtupleIColumn(tableindex + "_parentid");
   fNeutronTrackIDIndex = man ->CreateNtupleIColumn(tableindex + "_trackid");
@@ -210,6 +213,9 @@ bool NeutronProcessor::ProcessEvent(const G4Event* /*event*/) {
   std::vector<G4double> edeps = fTracker->GetEnergyDeposited();
   for(double e : edeps) total_edep+=e;
 
+  // std::cout << " - Neutron Events: " << (int) parent_ids.size() << std::endl;
+  // std::cout << " - Neutron EDep: " << total_edep << std::endl;
+
   if((parent_ids.size()>0)&&(total_edep>0))
   {
     fHasInfo = true;
@@ -217,6 +223,7 @@ bool NeutronProcessor::ProcessEvent(const G4Event* /*event*/) {
     // Loop over all of the neutron events saved
     std::vector<int> track_ids = fTracker->GetTrackID();
     std::vector<int> event_ids = fTracker->GetEventID();
+    std::vector<int> event_pdgs = fTracker->GetPDGs();
 
     std::vector<G4double> kes  = fTracker->GetKineticEnergy();
     std::vector<G4double> times  = fTracker->GetTimes();
@@ -228,24 +235,40 @@ bool NeutronProcessor::ProcessEvent(const G4Event* /*event*/) {
 
       man->FillNtupleDColumn(fNeutronTimeIndex, times.at(id));
       man->FillNtupleDColumn(fNeutronEdepIndex, edeps.at(id) / MeV);
-      // man->FillNtupleDColumn(fNeutronMultIndex, fTracker->GetMultiplicity() );
-      man->FillNtupleDColumn(fNeutronPosRIndex, (pos.at(id)).perp()/m );
+      man->FillNtupleDColumn(fNeutronPosRIndex, (pos.at(id)).perp() );
       man->FillNtupleDColumn(fNeutronPosThetaIndex, (pos.at(id)).phi());
-
-      man->FillNtupleDColumn(fNeutronPosXIndex, (pos.at(id)).x()/m );
-      man->FillNtupleDColumn(fNeutronPosYIndex, (pos.at(id)).y()/m );
-      man->FillNtupleDColumn(fNeutronPosZIndex, (pos.at(id)).z()/m );
-
+      man->FillNtupleDColumn(fNeutronPosXIndex, (pos.at(id)).x() );
+      man->FillNtupleDColumn(fNeutronPosYIndex, (pos.at(id)).y() );
+      man->FillNtupleDColumn(fNeutronPosZIndex, (pos.at(id)).z() );
       man->FillNtupleDColumn(fNeutronMomXIndex, (mom.at(id)).x() );
       man->FillNtupleDColumn(fNeutronMomYIndex, (mom.at(id)).y() );
       man->FillNtupleDColumn(fNeutronMomZIndex, (mom.at(id)).z() );
       man->FillNtupleDColumn(fNeutronKEIndex, kes.at(id)/MeV );
-
+      man->FillNtupleIColumn(fNeutronPDGIndex, event_pdgs.at(id));
       man->FillNtupleIColumn(fNeutronEventIDIndex, event_ids.at(id));
       man->FillNtupleIColumn(fNeutronParentIDIndex, parent_ids.at(id));
       man->FillNtupleIColumn(fNeutronTrackIDIndex, track_ids.at(id));
       man->AddNtupleRow();
     }
+
+  } else {
+
+    man->FillNtupleDColumn(fNeutronTimeIndex, kInfinity);
+    man->FillNtupleDColumn(fNeutronEdepIndex, kInfinity);
+    man->FillNtupleDColumn(fNeutronPosRIndex, kInfinity);
+    man->FillNtupleDColumn(fNeutronPosThetaIndex, kInfinity);
+    man->FillNtupleDColumn(fNeutronPosXIndex, kInfinity);
+    man->FillNtupleDColumn(fNeutronPosYIndex, kInfinity);
+    man->FillNtupleDColumn(fNeutronPosZIndex, kInfinity);
+    man->FillNtupleDColumn(fNeutronMomXIndex, kInfinity);
+    man->FillNtupleDColumn(fNeutronMomYIndex, kInfinity);
+    man->FillNtupleDColumn(fNeutronMomZIndex, kInfinity);
+    man->FillNtupleDColumn(fNeutronKEIndex, kInfinity);
+    man->FillNtupleIColumn(fNeutronPDGIndex, kInfinity);
+    man->FillNtupleIColumn(fNeutronEventIDIndex, kInfinity);
+    man->FillNtupleIColumn(fNeutronParentIDIndex, kInfinity);
+    man->FillNtupleIColumn(fNeutronTrackIDIndex, kInfinity);
+    man->AddNtupleRow();
 
   }
 

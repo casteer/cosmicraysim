@@ -1,6 +1,6 @@
 
 {
- name: "MATERIAL", 
+ name: "MATERIAL",
  index: "SiO2_Air_H20_0p01",
  type: "compound",
  element_names: [ "Si",  "O",  "H",  "C",  "N"]
@@ -11,7 +11,7 @@
 
 
 {
- name: "MATERIAL", 
+ name: "MATERIAL",
  index: "SiO2_Air_H20_0p02",
  type: "compound",
  element_names: [ "Si",  "O",  "H",  "C",  "N"]
@@ -22,7 +22,7 @@
 
 
 {
- name: "MATERIAL", 
+ name: "MATERIAL",
  index: "SiO2_Air_H20_0p05",
  type: "compound",
  element_names: [ "Si",  "O",  "H",  "C",  "N"]
@@ -33,7 +33,7 @@
 
 
 {
- name: "MATERIAL", 
+ name: "MATERIAL",
  index: "SiO2_Air_H20_0p1",
  type: "compound",
  element_names: [ "Si",  "O",  "H",  "C",  "N"]
@@ -44,7 +44,7 @@
 
 
 {
- name: "MATERIAL", 
+ name: "MATERIAL",
  index: "SiO2_Air_H20_0p2",
  type: "compound",
  element_names: [ "Si",  "O",  "H",  "C",  "N"]
@@ -55,7 +55,7 @@
 
 
 {
- name: "MATERIAL", 
+ name: "MATERIAL",
  index: "SiO2_Air_H20_0p3",
  type: "compound",
  element_names: [ "Si",  "O",  "H",  "C",  "N"]
@@ -66,7 +66,7 @@
 
 
 {
- name: "MATERIAL", 
+ name: "MATERIAL",
  index: "SiO2_Air_H20_0p4",
  type: "compound",
  element_names: [ "Si",  "O",  "H",  "C",  "N"]
@@ -355,8 +355,3 @@
   density: 1.4,
   density_units: "g/cm3"
 }
-
-
-
-
-

@@ -65,6 +65,7 @@ bool CoincidenceTrigger::ProcessTrigger(const G4Event* /*event*/) {
   // Trigger requires all detectors to be triggered within a certain time window
   bool complete_trig = false;
 
+
   // Check for the fEfficiency at each hit
   if(fEfficiency!=1.0){
     G4double r = G4UniformRand();
@@ -73,13 +74,28 @@ bool CoincidenceTrigger::ProcessTrigger(const G4Event* /*event*/) {
 
   int triggers = 0;
   for (uint i = 0; i < fProcessors.size(); i++){
-    G4double ener = fProcessors[i]->GetEnergy();
-    if (ener > fEnergyThreshold) triggers++;
+
+    bool trig = fProcessors[i]->HasInfo();
+
+    if(fEnergyThreshold==0){
+      if(trig) triggers++;
+    } else {
+
+      G4double ener = fProcessors[i]->GetEnergy();
+      if (ener > fEnergyThreshold) triggers++;
+
+    }
+
   }
 
   if(triggers>=fRequireN) complete_trig = true;
 
   // std::cout << "Returning True Trigger : " << complete_trig << std::endl;
+
+  // DEBUG
+  // std::cout << "Returning Trigger : " << complete_trig << std::endl;
+  // std::cout << "Returning Triggers : " << triggers << std::endl;
+
   fTriggered = complete_trig;
 
   return complete_trig;

@@ -90,6 +90,7 @@ public:
       inline std::vector<int> GetParentID(){return fNeutronParentID;};
       inline std::vector<int> GetTrackID(){return fNeutronTrackID;};
       inline std::vector<int> GetEventID(){return fNeutronEventID;};
+      inline std::vector<int> GetPDGs(){return fNeutronPDG;};
 
       inline std::vector<double> GetEnergyDeposited(){return fNeutronEnergyDeposited;};
       inline std::vector<double> GetKineticEnergy(){return fNeutronKE;};
@@ -107,6 +108,8 @@ protected:
   std::vector<G4double> fNeutronTime;
   std::vector<G4ThreeVector> fNeutronPos;
   std::vector<G4ThreeVector> fNeutronMom;
+
+  std::vector<G4int> fNeutronPDG;
 
   std::vector<G4int> fNeutronEventID;
   std::vector<G4int> fNeutronParentID;
@@ -169,6 +172,7 @@ protected:
   int fNeutronPosRIndex;
   int fNeutronPosThetaIndex;
 
+  int fNeutronPDGIndex;
   int fNeutronTrackIDIndex; ///< MomY Ntuple Index
   int fNeutronParentIDIndex; ///< MomZ Ntuple Index
   int fNeutronEventIDIndex; ///< MomZ Ntuple Index

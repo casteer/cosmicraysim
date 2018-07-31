@@ -26,7 +26,7 @@ ShuklaPrimaryGenerator::ShuklaPrimaryGenerator()
 
 
     // Setup Defaults + Table Inputs
-    fMinEnergy = 0.1;
+    fMinEnergy = 0.01;
     fMaxEnergy = 5000.0;
 
     fPar_I0  = 88.5; // m-2 s-1 sr-1
@@ -101,8 +101,8 @@ ShuklaPrimaryGenerator::ShuklaPrimaryGenerator()
     std::cout << "FLX: --> R/d        : " << fPar_rad / fPar_dis << std::endl;
 
     // Check limits
-    if (fMinEnergy < 0.1) {
-        std::cout << "min_energy must be >= 0.1 GeV!" << std::endl;
+    if (fMinEnergy < 0.01) {
+        std::cout << "min_energy must be >= 0.01 GeV!" << std::endl;
         throw;
     }
     if (fMaxEnergy > 5000.0) {
@@ -122,7 +122,7 @@ ShuklaPrimaryGenerator::ShuklaPrimaryGenerator()
     fEnergyPDF->SetParameter(3, 1.0);
 
     // Normalize the PDF
-    G4double norm = fEnergyPDF->Integral(0.1 * GeV, 5000.0 * GeV);
+    G4double norm = fEnergyPDF->Integral(0.01 * GeV, 5000.0 * GeV);
     fEnergyPDF->SetParameter(3, 1.0 / norm);
 
     // Get the speed up factor
@@ -229,6 +229,8 @@ void ShuklaPrimaryGenerator::GetSourceBox() {
         }
 
         fArea = size[0] * size[1] / m / m;
+        std::cout << "FLX: --> Source box area: " << fArea << " m2 " << std::endl;
+
         break;
     }
     fSourceBox = true;
@@ -275,6 +277,10 @@ std::vector<G4Box*> ShuklaPrimaryGenerator::GetTargetBoxes() {
 
         G4Box* box_sol = new G4Box(index, 0.5 * size[0], 0.5 * size[1], 0.5 * size[2]);
         G4ThreeVector box_pos = G4ThreeVector(pos[0], pos[1], pos[2]);
+
+        // DEBUG
+        // std::cout << " Target Box Position : " <<  box_pos << std::endl;
+
 
         // Save Box
         fTargetBoxes.push_back(box_sol);
@@ -342,6 +348,7 @@ void ShuklaPrimaryGenerator::GeneratePrimaries(G4Event* anEvent) {
 
     do {
         throws++;
+
         // Sample point and direction
         direction = SampleDirection();
 
@@ -373,13 +380,12 @@ void ShuklaPrimaryGenerator::GeneratePrimaries(G4Event* anEvent) {
               }
             }
 
-            // Regardless of whether the event is accepted increment the time
-            fMuonTime -= std::log(1 - G4UniformRand())*(1.0/adjusted_rate);
-
 
         }// End for
 
-
+        // Regardless of whether the event is accepted increment the time
+        fMuonTime -= std::log(G4UniformRand())*(1.0/adjusted_rate);
+        // std::cout << " fMuonTime : " << fMuonTime << std::endl;
 
         if (throws >= 1E8) {
             std::cout << "Failed to find any good events in 1E6 tries!" << std::endl;

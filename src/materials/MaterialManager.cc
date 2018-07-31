@@ -53,8 +53,12 @@ G4Material* MaterialFactory::GetMaterial(std::string name) {
 
   // First Check if its inside the nist manager
   mat = nist->FindOrBuildMaterial(name);
-  if (mat) return mat;
 
+  if (mat){
+    std::cout << "Material : " << mat->GetName() << std::endl;
+    return mat;
+  }
+  
   // If not, find the material inside custom database
   DBTable mattbl = DB::Get()->GetTable("MATERIAL", name);
 

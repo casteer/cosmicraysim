@@ -159,12 +159,13 @@ G4Box* CRYPrimaryGenerator::GetSourceBox() {
 
     // Set our lateral box size for the CRY Engine
     fLateralBoxSize = size[0] / m;
-
+    std::cout << "FLX: --> Source Lateral Box Size: " << fLateralBoxSize << " m " << std::endl;
     // Create the box
     fSourceBox = new G4Box(index, 0.5 * size[0], 0.5 * size[1], 0.5 * size[2]);
     // Find box placement
     std::vector<G4double> pos = tbl.GetVecG4D("position");
     fSourceBoxPosition = G4ThreeVector(pos[0], pos[1], pos[2]);
+    std::cout << "FLX: --> Source Position: " << fSourceBoxPosition << " mm " << std::endl;
 
     break;
   }
@@ -188,6 +189,8 @@ std::vector<G4Box*> CRYPrimaryGenerator::GetTargetBoxes() {
     return fTargetBoxes;
   }
   std::cout << "FLX: --> Creating Target boxes" << std::endl;
+  fTargetBoxes.clear();
+  fTargetBoxPositions.clear();
 
   // If none set then make it
   std::vector<DBTable> targetlinks = DB::Get()->GetTableGroup("FLUX");
@@ -212,13 +215,18 @@ std::vector<G4Box*> CRYPrimaryGenerator::GetTargetBoxes() {
     G4ThreeVector box_pos = G4ThreeVector(pos[0], pos[1], pos[2]);
 
     // Save Box
+    std::cout << "FLX:  - Targets box: " << box_sol << std::endl;
+    std::cout << "FLX:  - Targets position: " << box_pos << std::endl;
+
     fTargetBoxes.push_back(box_sol);
     fTargetBoxPositions.push_back(box_pos);
   }
 
+  std::cout << "FLX: Found " << fTargetBoxes.size() << " target boxes" << std::endl;
   // Set flag and return
   fCheckTargetBoxes = true;
   return fTargetBoxes;
+
 }
 
 void CRYPrimaryGenerator::GeneratePrimaries(G4Event* anEvent)
@@ -265,7 +273,7 @@ void CRYPrimaryGenerator::GeneratePrimaries(G4Event* anEvent)
       G4ThreeVector boxposthrow;// = fSourceBox->GetPointOnSurface() + fSourceBoxPosition;
       boxposthrow[0] = fSourceBoxPosition[0] + 0.5*fLateralBoxSize * (-1.0 + 2.0 * G4UniformRand()) ;// in m
       boxposthrow[1] = fSourceBoxPosition[1] + 0.5*fLateralBoxSize * (-1.0 + 2.0 * G4UniformRand()) ;// in m
-      boxposthrow[2] = fSourceBoxPosition[2];// in mm
+      boxposthrow[2] = fSourceBoxPosition[2];// in mm ?
 
 
       // Setup new vector position
@@ -273,18 +281,26 @@ void CRYPrimaryGenerator::GeneratePrimaries(G4Event* anEvent)
       G4ThreeVector position  = boxposthrow;
       (*vect)[j]->setPosition(position[0]*m, position[1]*m, position[2]);
 
-      // std::cout << position[0]*m << " " << position[1]*m << " " << position[2] << std::endl;
+      // std::cout <<(*vect)[j]->x() << " " << (*vect)[j]->y() << " " << (*vect)[j]->z() << std::endl;
 
       // Get Direction for trjacetory pre-selection
       G4ThreeVector direction = G4ThreeVector((*vect)[j]->u(), (*vect)[j]->v(), (*vect)[j]->w());
       bool good_traj = (fTargetBoxes.size() == 0);
+      // std::cout << " Good traj: " << good_traj << std::endl;
 
       // Make sure trajectory falls inside our target box if we have one.
       for (uint i = 0; i < fTargetBoxes.size(); i++) {
-        G4double d = (fTargetBoxes.at(i))->DistanceToIn(
-                       position - fTargetBoxPositions.at(i), direction);
+        G4ThreeVector rel_pos = G4ThreeVector( position[0]*m - (fTargetBoxPositions.at(i))[0],
+                                              position[1]*m - (fTargetBoxPositions.at(i))[1],
+                                              position[2] - (fTargetBoxPositions.at(i))[2]);
+        G4double d = (fTargetBoxes.at(i))->DistanceToIn( rel_pos , direction);
 
         if (d != kInfinity) {
+          // std::cout << " N: " << vect->size() << std::endl;
+          // std::cout << " Position: " << (*vect)[j]->x() << " " << (*vect)[j]->y() << " " << (*vect)[j]->z() << std::endl;
+          // std::cout << " Direction: " << direction << std::endl;
+          // std::cout << " Rel. Position: " << position*m - fTargetBoxPositions.at(i) << std::endl;
+          // std::cout << " Distance : " << d  << " i " << i << std::endl<< std::endl;
           good_traj = true;
           break;
         }
@@ -331,16 +347,16 @@ void CRYPrimaryGenerator::GeneratePrimaries(G4Event* anEvent)
     // // Get Name
     // particleName = CRYUtils::partName((*vect)[j]->id());
 
-    // //....debug output
-    // cout << "  "          << particleName << " "
+    //....debug output
+    // std::cout << "  "          << particleName << " "
     //      << "charge="      << (*vect)[j]->charge() << " "
-    //      << setprecision(4)
+    //      << std::setprecision(4)
     //      << "energy (MeV)=" << (*vect)[j]->ke()*MeV << " "
     //      << "pos (m)"
     //      << G4ThreeVector((*vect)[j]->x(), (*vect)[j]->y(), (*vect)[j]->z())
     //      << " " << "direction cosines "
     //      << G4ThreeVector((*vect)[j]->u(), (*vect)[j]->v(), (*vect)[j]->w())
-    //      << " " << endl;
+    //      << " " << std::endl;
 
     // Add particles to gun
     particleGun->SetParticleDefinition(particleTable->FindParticle((*vect)[j]->PDGid()));

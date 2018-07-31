@@ -99,9 +99,11 @@ void Analysis::ProcessEvent(const G4Event* event) {
   std::vector<VTrigger*>::iterator titer;
   int i=0;
   for (titer = fTriggers.begin(); titer != fTriggers.end(); titer++) {
-    (*titer)->ProcessTrigger(event);
+
+      (*titer)->ProcessTrigger(event);
+
       if ((*titer)->GetTrigger()) fSavedCounts[i]++;
-    i++;
+      i++;
   }
 
   // Add one to total generated
@@ -161,7 +163,7 @@ VTrigger* Analysis::GetTrigger(std::string id) {
   return 0;
 }
 
-std::vector<int> Analysis::GetCounts(){ return fSavedCounts;};  
+std::vector<int> Analysis::GetCounts(){ return fSavedCounts;};
 
 void Analysis::RegisterProcessor(VProcessor* p) {
   fProcessors.push_back(p);
