@@ -23,7 +23,6 @@ public:
   /// Simple Generic C++ Constructor
   CoincidenceTrigger(std::string name,
                 std::vector<std::string> processors,
-                G4int hit_detectors,
                 G4double ethresh);
 
   /// Destructor
@@ -38,6 +37,8 @@ public:
 protected:
 
   std::vector<VProcessor*> fProcessors; ///< Vector of all valid processors
+  std::vector<int> fTriggerMask;
+  std::vector<double> fTriggerEffs;
   G4int fRequireN;// Requires N detectors to be hit in order to trigger
   G4double fEnergyThreshold; ///< Energy Threshold setting, applied to all processors
   G4double fEfficiency;
